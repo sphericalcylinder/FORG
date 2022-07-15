@@ -1,0 +1,9 @@
+GAMEPLAY:
+Player moves to the right
+Timer that counts down for each room, get to the next one or you lose!
+
+WORLD GENERATION:
+Blocks of the ground are created
+Different platforms are spawned on a grid-like thingy
+Make platform legs extend down to the ground or other platforms
+Randomly put ladders on the side of platforms that extend to other platforms or the ground
