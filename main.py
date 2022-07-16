@@ -10,7 +10,7 @@ pygame.display.set_caption("FORG")
 CLOCK = pygame.time.Clock()
 pygame.font.init()
 
-pygame.event.set_allowed((pygame.KEYDOWN, pygame.KEYUP))
+pygame.event.set_allowed((pygame.KEYDOWN, pygame.KEYUP, pygame.MOUSEBUTTONDOWN))
 
 font1 = pygame.font.SysFont('timesnewroman', 50)
 
@@ -23,7 +23,7 @@ for i in range(25):
     platform3.generate()
     platformgroup.add(platform3)
 
-grass = pygame.image.load('assets/grass.png')
+grass = pygame.image.load('grass.png')
 
 a = False
 d = False
@@ -57,6 +57,8 @@ while True:
                     a = False
                 case pygame.K_d:
                     d = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pass
 
     godown = True
 
@@ -95,7 +97,7 @@ while True:
     if d and abs(xvcurrent) < xvcap:
         xvcurrent += 0.1
         xvcurrent = round(xvcurrent, 1)
-    if a == False and d == False:
+    if a == False and d == False and jump == False:
         for z in range(3):
             if xvcurrent < 0:
                 xvcurrent += 0.1
@@ -106,14 +108,15 @@ while True:
     
     player.x += xvcurrent
 
+    if not jumpable:
+        jump = False
+
     if jump and jumpable:
         velocity = -2
         jump = False
         jumpable = False
 
     player.y += velocity
-
-
 
     platformgroup.update()
     platformgroup.draw(SCREEN)
