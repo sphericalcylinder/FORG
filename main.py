@@ -35,9 +35,9 @@ jump = False
 jumpable = False
 
 gravity = 0.05
-velocity = 0
+yvelocity = 0
 godown = False
-xvcurrent = 0
+xvelocity = 0
 xvcap = 5
 
 bcount = 10
@@ -80,6 +80,8 @@ while True:
                     platform3 = Platform()
                     platform3.generate()
                     platformgroup.add(platform3)
+                player.x = 5
+                player.y = 499 - player.image.get_height()
 
     godown = True
 
@@ -89,55 +91,55 @@ while True:
                 player.rect.left < platform.rect.right and \
                 player.rect.bottom < platform.rect.bottom:
             godown = False
-            velocity = 0
+            yvelocity = 0
             jumpable = True
             if player.rect.bottom < platform.rect.bottom:
                 player.y = platform.rect.top - player.image.get_height() + 1
 
     if player.y >= 449 - player.image.get_height():
-        velocity = 0
+        yvelocity = 0
         godown = False
         jumpable = True
         if player.y > 449 - player.image.get_height():
             player.y = 449 - player.image.get_height()
 
     if godown == True:
-        velocity += gravity
-        velocity = round(velocity, 2)
+        yvelocity += gravity
+        yvelocity = round(yvelocity, 2)
 
     if player.rect.left <= 0:
         a = False
-        xvcurrent = 0
+        xvelocity = 0
     if player.rect.right >= WIDTH-10:
         d = False
-        xvcurrent = 0
+        xvelocity = 0
 
-    if a and abs(xvcurrent) < xvcap:
-        xvcurrent -= 0.2
-        xvcurrent = round(xvcurrent, 1)
-    if d and abs(xvcurrent) < xvcap:
-        xvcurrent += 0.2
-        xvcurrent = round(xvcurrent, 1)
+    if a and abs(xvelocity) < xvcap:
+        xvelocity -= 0.2
+        xvelocity = round(xvelocity, 1)
+    if d and abs(xvelocity) < xvcap:
+        xvelocity += 0.2
+        xvelocity = round(xvelocity, 1)
     if a == False and d == False and jump == False:
         for z in range(4):
-            if xvcurrent < 0:
-                xvcurrent += 0.1
-                xvcurrent = round(xvcurrent, 1)
-            elif xvcurrent > 0:
-                xvcurrent -= 0.1
-                xvcurrent = round(xvcurrent, 1)
+            if xvelocity < 0:
+                xvelocity += 0.1
+                xvelocity = round(xvelocity, 1)
+            elif xvelocity > 0:
+                xvelocity -= 0.1
+                xvelocity = round(xvelocity, 1)
 
-    player.x += xvcurrent
+    player.x += xvelocity
 
     if not jumpable:
         jump = False
 
     if jump and jumpable:
-        velocity = -2
+        yvelocity = -2
         jump = False
         jumpable = False
 
-    player.y += velocity
+    player.y += yvelocity
 
     platformgroup.update()
     platformgroup.draw(SCREEN)
