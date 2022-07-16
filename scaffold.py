@@ -6,7 +6,7 @@ class Platform(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load('platform3.png')
+        self.image = pygame.image.load('assets/platform3.png')
         self.x = 0
         self.y = 0
         self.rect = pygame.Rect(self.x, self.y, 60, 20)

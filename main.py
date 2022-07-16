@@ -23,7 +23,9 @@ for i in range(25):
     platform3.generate()
     platformgroup.add(platform3)
 
-grass = pygame.image.load('grass.png')
+grass = pygame.image.load('assets/grass.png')
+button = pygame.image.load('assets/button-1.png')
+buttonrect = pygame.Rect(0, 0, button.get_width(), button.get_height())
 
 a = False
 d = False
@@ -58,7 +60,15 @@ while True:
                 case pygame.K_d:
                     d = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            pass
+            mousex, mousey = pygame.mouse.get_pos()
+            if mousex < buttonrect.right and mousey < buttonrect.bottom:
+                button = pygame.image.load('assets/button-2.png')
+                platformgroup.empty()
+                for i in range(25):
+                    platform3 = Platform()
+                    platform3.generate()
+                    platformgroup.add(platform3)
+
 
     godown = True
 
@@ -107,7 +117,7 @@ while True:
                 xvcurrent = round(xvcurrent, 1)
     
     player.x += xvcurrent
-
+    
     if not jumpable:
         jump = False
 
@@ -123,6 +133,7 @@ while True:
     player.update()
     SCREEN.blit(player.image, player.rect)
     SCREEN.blit(grass, (0, 450, grass.get_width(), grass.get_height()))
+    SCREEN.blit(button, buttonrect)
 
     pygame.display.flip()
     CLOCK.tick(60)
