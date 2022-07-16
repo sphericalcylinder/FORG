@@ -3,6 +3,7 @@ import sys
 import random
 from marlene import Marlene
 from scaffold import Platform
+from platlegs import PlatformLegs
 
 RESOLUTION = WIDTH, HEIGHT = 600, 500
 SCREEN = pygame.display.set_mode(RESOLUTION)
@@ -21,30 +22,44 @@ platlegsgroup = pygame.sprite.Group()
 player = Marlene()
 platformvalues = []
 supportedplatforms = []
+def genmap():
 
-for i in range(25):
-    platform3 = Platform()
-    platform3.generate()
-    platformgroup.add(platform3)
-    platlegsgroup.add(platform3.platformlegs)
-    platformvalues.append([platform3.x, platform3.y, i, platform3])
-    
-#calculate the highest y of each column
-currenty = 500
-for j in range(50, 600, 50):
-    currentvalues = []
-    for k in range(len(platformvalues)):
-        if platformvalues[k][0] == j:
-            currentvalues.append(platformvalues[k])
+    platlegsgroup.empty()
+    platformgroup.empty()
 
+    for i in range(25):
+        platform3 = Platform()
+        platform3.generate()
+        platformgroup.add(platform3)
+        platformvalues.append([platform3.x, platform3.y, i, platform3])
+        
+    #calculate the highest y of each column
     currenty = 500
-    currenthighestplatform = None
-    for l in range(len(currentvalues)):
-        currentplatform = currentvalues[l]
-        if currentplatform[1] <= currenty:
-            currenty = currentplatform[1]
-            currenthighestplatform = currentplatform
+    for j in range(50, 600, 50):
+        currentvalues = []
+        for k in range(len(platformvalues)):
+            if platformvalues[k][0] == j:
+                currentvalues.append(platformvalues[k])
 
+        currenty = 500
+        currenthighestplatform = None
+        for l in range(len(currentvalues)):
+            currentplatform = currentvalues[l]
+            if currentplatform[1] <= currenty:
+                currenty = currentplatform[1]
+                currenthighestplatform = currentplatform
+        if currenthighestplatform != None:
+            supportedplatforms.append(currenthighestplatform)
+
+    #spawn the LEGS
+    for selectedplatform in supportedplatforms:
+        legy = selectedplatform[1]
+        for i in range(20):
+            legs = PlatformLegs(selectedplatform[0], legy)
+            platlegsgroup.add(legs)
+            legy += 25
+
+genmap()
 
 
 grass = pygame.image.load('assets/grass.png')
@@ -111,28 +126,7 @@ while True:
                 button = pygame.image.load('assets/button-2.png')
                 button = pygame.transform.scale(button, (80, 40))
                 bcount = 0
-                platformgroup.empty()
-                platlegsgroup.empty()
-                for i in range(25):
-                    platform3 = Platform()
-                    platform3.generate()
-                    platformgroup.add(platform3)
-                    platlegsgroup.add(platform3.platformlegs)
-                    platformvalues.append([platform3.x, platform3.y, i, platform3])
-                currenty = 500
-                for j in range(50, 600, 50):
-                    currentvalues = []
-                    for k in range(len(platformvalues)):
-                        if platformvalues[k][0] == j:
-                            currentvalues.append(platformvalues[k])
-
-                    currenty = 500
-                    currenthighestplatform = None
-                    for l in range(len(currentvalues)):
-                        currentplatform = currentvalues[l]
-                        if currentplatform[1] <= currenty:
-                            currenty = currentplatform[1]
-                            currenthighestplatform = currentplatform
+                genmap()
                 player.x = 5
                 player.y = 499 - player.image.get_height()
                 gravel = False
@@ -171,11 +165,7 @@ while True:
         d = False
         xvelocity = 0
     if player.rect.top - 20 >= HEIGHT:
-        platformgroup.empty()
-        for i in range(25):
-            platform3 = Platform()
-            platform3.generate()
-            platformgroup.add(platform3)
+        genmap()
         player.x = 5
         player.y = 499 - player.image.get_height()
         gravel = False
@@ -210,11 +200,11 @@ while True:
     player.y += yvelocity
 
     if gravel and not nofloor:
-        #sprites = platformgroup.sprites()
-        #toremove = random.choices(sprites, k=7)
-        #platformgroup.remove(toremove)
-        #nofloor = True
-        #gravel = False
+        sprites = platformgroup.sprites()
+        toremove = random.choices(sprites, k=7)
+        platformgroup.remove(toremove)
+        nofloor = True
+        gravel = False
         pass
 
     platformgroup.update()
@@ -225,5 +215,5 @@ while True:
     SCREEN.blit(button, buttonrect)
     SCREEN.blit(player.image, player.rect)
 
-    pygame.display.flip()
+    pygame.display.update()
     CLOCK.tick(60)

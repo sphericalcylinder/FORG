@@ -1,7 +1,6 @@
 import pygame
 import random
 import coordchoices
-from platlegs import PlatformLegs
 
 class Platform(pygame.sprite.Sprite):
 
@@ -17,7 +16,6 @@ class Platform(pygame.sprite.Sprite):
         self.rect.centery = random.choice(coordchoices.ychoices)
         self.x = self.rect.centerx
         self.y = self.rect.centery
-        self.platformlegs = PlatformLegs(self.x, self.y)
 
     def update(self) -> None:
         self.rect = pygame.Rect(self.x, self.y, 50, 20)

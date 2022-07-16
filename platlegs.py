@@ -8,3 +8,6 @@ class PlatformLegs(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.rect = pygame.Rect(self.x, self.y, 60, 25)
+    
+    def update(self) -> None:
+        self.rect = pygame.Rect(self.x, self.y, 60, 25)
