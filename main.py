@@ -18,10 +18,9 @@ font1 = pygame.font.SysFont('timesnewroman', 22)
 
 platformgroup = pygame.sprite.Group()
 
-
 player = Marlene()
-platformvalues = []
-supportedplatforms = []
+#platformvalues = []
+#supportedplatforms = []
 def genmap():
 
     platformgroup.empty()
@@ -30,33 +29,33 @@ def genmap():
             platform3 = Platform(coordchoices.ychoices[y])
             platform3.generate()
             platformgroup.add(platform3)
-            #platformvalues.append([platform3.x, platform3.y, y, platform3])
-        
-    #calculate the highest y of each column
-    #currenty = 500
-    #for j in range(50, 600, 50):
-    #    currentvalues = []
-    #    for k in range(len(platformvalues)):
-    #        if platformvalues[k][0] == j:
-    #            currentvalues.append(platformvalues[k])
+        #platformvalues.append([platform3.x, platform3.y, y, platform3])
 
-    #    currenty = 500
-    #    currenthighestplatform = None
-    #    for l in range(len(currentvalues)):
-    #        currentplatform = currentvalues[l]
-    #        if currentplatform[1] <= currenty:
-    #            currenty = currentplatform[1]
-    #            currenthighestplatform = currentplatform
-    #    if currenthighestplatform != None:
-    #        supportedplatforms.append(currenthighestplatform)
+#calculate the highest y of each column
+#currenty = 500
+#for j in range(50, 600, 50):
+#    currentvalues = []
+#    for k in range(len(platformvalues)):
+#        if platformvalues[k][0] == j:
+#            currentvalues.append(platformvalues[k])
 
-    ##spawn the LEGS
-    #for selectedplatform in supportedplatforms:
-    #    legy = selectedplatform[1]
-    #    for i in range(20):
-    #        legs = PlatformLegs(selectedplatform[0], legy)
-    #        platlegsgroup.add(legs)
-    #        legy += 25
+#    currenty = 500
+#    currenthighestplatform = None
+#    for l in range(len(currentvalues)):
+#        currentplatform = currentvalues[l]
+#        if currentplatform[1] <= currenty:
+#            currenty = currentplatform[1]
+#            currenthighestplatform = currentplatform
+#    if currenthighestplatform != None:
+#        supportedplatforms.append(currenthighestplatform)
+
+##spawn the LEGS
+#for selectedplatform in supportedplatforms:
+#    legy = selectedplatform[1]
+#    for i in range(20):
+#        legs = PlatformLegs(selectedplatform[0], legy)
+#        platlegsgroup.add(legs)
+#        legy += 25
 
 genmap()
 
@@ -66,6 +65,9 @@ exclaim = pygame.image.load('assets/exclamatorypunctuation.png')
 trophy = pygame.image.load('assets/trophy.png')
 trophyrect = pygame.Rect((WIDTH/2)-(trophy.get_width()/2), 0, trophy.get_width(), trophy.get_height())
 
+
+global a
+global d
 a = False
 d = False
 jump = False
@@ -85,6 +87,63 @@ gravelcount2 = 200
 
 level = 1
 
+ANIMATIONFRAMEDURATION = 3
+global animationframeposition
+animationframeposition = 0
+global animationcurrentframe
+animationcurrentframe = 0
+global lastmovement
+lastmovement = None
+
+def advanceAnimation():
+    global animationframeposition
+    global animationcurrentframe
+    global lastmovement
+    global a
+    global d
+    if a == True and d == False and jumpable == True:
+        lastmovement = "a"
+        if animationframeposition < ANIMATIONFRAMEDURATION:
+            animationframeposition += 1
+        else:
+            if animationcurrentframe > 3:
+                animationcurrentframe = 0
+            else:
+                player.image = player.leftwalkimages[animationcurrentframe]
+                animationcurrentframe += 1
+                animationframeposition = 0
+            
+    elif d == True and a == False and jumpable == True:
+        lastmovement = "d"
+        if animationframeposition < ANIMATIONFRAMEDURATION:
+            animationframeposition += 1
+        else:
+            if animationcurrentframe > 3:
+                animationcurrentframe = 0
+            else:
+                player.image = player.rightwalkimages[animationcurrentframe]
+                animationcurrentframe += 1
+                animationframeposition = 0 
+            
+    elif (a and d and jumpable) or (not a and not d and jumpable):
+        player.image = player.forwards
+        animationframeposition = 0
+        animationcurrentframe = 0
+        #make the thingy face forwards AND set the current frame and frame position to ZERO
+    elif jumpable == False:
+        #do the standing pose with the lastmovement thing and set the thingys to zero
+        if lastmovement == "a":
+            player.image = player.leftwalkimages[0]
+        elif lastmovement == "d":
+            player.image = player.rightwalkimages[0]
+        else:
+            player.image = player.forwards
+        animationframeposition = 0
+        animationcurrentframe = 0
+    
+
+
+
 while True:
 
     SCREEN.fill('#ffffff')
@@ -102,7 +161,7 @@ while True:
     if gravelcount2 == 0:
         ungravel = False
         gravelcount2 = 200
-        gravelcount = random.randint(300, 700)
+        gravelcount = random.randint(200, 700)
         nofloor = False
         platformgroup.add(toremove)
 
@@ -123,6 +182,8 @@ while True:
                     a = False
                 case pygame.K_d:
                     d = False
+
+    advanceAnimation()
 
     godown = True
 
@@ -151,11 +212,13 @@ while True:
         player.y = 499 - player.image.get_height()
         gravel = False
         nofloor = False
-        gravelcount = random.randint(100, 500)
+        gravelcount = random.randint(200, 700)
         gravelcount2 = 200
         ungravel = False
         toremove = None
         level += 1
+        if level == 16:
+            break
 
     if godown == True:
         yvelocity += gravity
@@ -173,7 +236,7 @@ while True:
         player.y = 499 - player.image.get_height()
         gravel = False
         nofloor = False
-        gravelcount = random.randint(100, 500)
+        gravelcount = random.randint(200, 700)
         gravelcount2 = 200
         ungravel = False
         toremove = None
@@ -185,7 +248,7 @@ while True:
     if d and abs(xvelocity) < xvcap:
         xvelocity += 0.2
         xvelocity = round(xvelocity, 1)
-    if ((a == False and d == False) or (a == True and d == True)) and jump == False:
+    if ((not a and not d) or (a and d )) and not jump:
         for z in range(4):
             if xvelocity < 0:
                 xvelocity += 0.1
