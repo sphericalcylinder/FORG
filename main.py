@@ -3,6 +3,7 @@ import sys
 import random
 from marlene import Marlene
 from scaffold import Platform
+import coordchoices
 
 RESOLUTION = WIDTH, HEIGHT = 600, 500
 SCREEN = pygame.display.set_mode(RESOLUTION)
@@ -11,7 +12,7 @@ CLOCK = pygame.time.Clock()
 pygame.font.init()
 
 pygame.event.set_allowed(
-    (pygame.KEYDOWN, pygame.KEYUP, pygame.MOUSEBUTTONDOWN))
+    (pygame.KEYDOWN, pygame.KEYUP))
 
 font1 = pygame.font.SysFont('timesnewroman', 22)
 
@@ -24,12 +25,12 @@ supportedplatforms = []
 def genmap():
 
     platformgroup.empty()
-
-    for i in range(25):
-        platform3 = Platform()
-        platform3.generate()
-        platformgroup.add(platform3)
-        platformvalues.append([platform3.x, platform3.y, i, platform3])
+    for y in range(16):
+        for e in range(2):
+            platform3 = Platform(coordchoices.ychoices[y])
+            platform3.generate()
+            platformgroup.add(platform3)
+            #platformvalues.append([platform3.x, platform3.y, y, platform3])
         
     #calculate the highest y of each column
     #currenty = 500
@@ -62,8 +63,6 @@ genmap()
 grass = pygame.image.load('assets/grass.png')
 button = pygame.image.load('assets/button-1.png')
 exclaim = pygame.image.load('assets/exclamatorypunctuation.png')
-button = pygame.transform.scale(button, (80, 40))
-buttonrect = pygame.Rect(0, 0, button.get_width(), button.get_height())
 trophy = pygame.image.load('assets/trophy.png')
 trophyrect = pygame.Rect((WIDTH/2)-(trophy.get_width()/2), 0, trophy.get_width(), trophy.get_height())
 
@@ -78,8 +77,6 @@ godown = False
 xvelocity = 0
 xvcap = 5
 
-bcount = 10
-
 gravel = False
 ungravel = False
 nofloor = False
@@ -90,10 +87,8 @@ level = 1
 
 while True:
 
-
     SCREEN.fill('#ffffff')
 
-    bcount += 1
     gravelcount -= 1
     if ungravel:
         gravelcount2 -= 1
@@ -110,11 +105,6 @@ while True:
         gravelcount = random.randint(300, 700)
         nofloor = False
         platformgroup.add(toremove)
-
-    if bcount >= 10:
-        button = pygame.image.load('assets/button-1.png')
-        button = pygame.transform.scale(button, (80, 40))
-        bcount = 10
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -133,21 +123,6 @@ while True:
                     a = False
                 case pygame.K_d:
                     d = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mousex, mousey = pygame.mouse.get_pos()
-            if mousex < buttonrect.right and mousey < buttonrect.bottom and bcount >= 10:
-                button = pygame.image.load('assets/button-2.png')
-                button = pygame.transform.scale(button, (80, 40))
-                bcount = 0
-                genmap()
-                player.x = 5
-                player.y = 499 - player.image.get_height()
-                gravel = False
-                nofloor = False
-                gravelcount = random.randint(100, 500)
-                gravelcount2 = 200
-                ungravel = False
-                toremove = None
 
     godown = True
 
@@ -233,7 +208,7 @@ while True:
 
     if gravel and not nofloor:
         sprites = platformgroup.sprites()
-        toremove = random.choices(sprites, k=10)
+        toremove = random.choices(sprites, k=15)
         platformgroup.remove(toremove)
         nofloor = True
         gravel = False
@@ -244,7 +219,6 @@ while True:
     player.update()
 
     SCREEN.blit(grass, (0, 450, grass.get_width(), grass.get_height()))
-    SCREEN.blit(button, buttonrect)
     SCREEN.blit(player.image, player.rect)
     SCREEN.blit(trophy, trophyrect)
 
