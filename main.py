@@ -10,7 +10,8 @@ pygame.display.set_caption("FORG")
 CLOCK = pygame.time.Clock()
 pygame.font.init()
 
-pygame.event.set_allowed((pygame.KEYDOWN, pygame.KEYUP, pygame.MOUSEBUTTONDOWN))
+pygame.event.set_allowed(
+    (pygame.KEYDOWN, pygame.KEYUP, pygame.MOUSEBUTTONDOWN))
 
 font1 = pygame.font.SysFont('timesnewroman', 50)
 
@@ -25,6 +26,7 @@ for i in range(25):
 
 grass = pygame.image.load('assets/grass.png')
 button = pygame.image.load('assets/button-1.png')
+button = pygame.transform.scale(button, (80, 40))
 buttonrect = pygame.Rect(0, 0, button.get_width(), button.get_height())
 
 a = False
@@ -38,9 +40,17 @@ godown = False
 xvcurrent = 0
 xvcap = 5
 
+bcount = 10
+
 while True:
 
     SCREEN.fill('#ffffff')
+
+    bcount += 1
+    if bcount >= 10:
+        button = pygame.image.load('assets/button-1.png')
+        button = pygame.transform.scale(button, (80, 40))
+        bcount = 10
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -61,14 +71,15 @@ while True:
                     d = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             mousex, mousey = pygame.mouse.get_pos()
-            if mousex < buttonrect.right and mousey < buttonrect.bottom:
+            if mousex < buttonrect.right and mousey < buttonrect.bottom and bcount >= 10:
                 button = pygame.image.load('assets/button-2.png')
+                button = pygame.transform.scale(button, (80, 40))
+                bcount = 0
                 platformgroup.empty()
                 for i in range(25):
                     platform3 = Platform()
                     platform3.generate()
                     platformgroup.add(platform3)
-
 
     godown = True
 
@@ -102,22 +113,22 @@ while True:
         xvcurrent = 0
 
     if a and abs(xvcurrent) < xvcap:
-        xvcurrent -= 0.1
+        xvcurrent -= 0.2
         xvcurrent = round(xvcurrent, 1)
     if d and abs(xvcurrent) < xvcap:
-        xvcurrent += 0.1
+        xvcurrent += 0.2
         xvcurrent = round(xvcurrent, 1)
     if a == False and d == False and jump == False:
-        for z in range(3):
+        for z in range(4):
             if xvcurrent < 0:
                 xvcurrent += 0.1
                 xvcurrent = round(xvcurrent, 1)
             elif xvcurrent > 0:
                 xvcurrent -= 0.1
                 xvcurrent = round(xvcurrent, 1)
-    
+
     player.x += xvcurrent
-    
+
     if not jumpable:
         jump = False
 

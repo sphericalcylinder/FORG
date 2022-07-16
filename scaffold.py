@@ -9,7 +9,7 @@ class Platform(pygame.sprite.Sprite):
         self.image = pygame.image.load('assets/platform3.png')
         self.x = 0
         self.y = 0
-        self.rect = pygame.Rect(self.x, self.y, 60, 20)
+        self.rect = pygame.Rect(self.x, self.y, 53, 20)
 
     def generate(self):
         self.rect.centerx = random.choice(coordchoices.xchoices)
@@ -18,4 +18,4 @@ class Platform(pygame.sprite.Sprite):
         self.y = self.rect.centery
 
     def update(self) -> None:
-        self.rect = pygame.Rect(self.x, self.y, 60, 20)
+        self.rect = pygame.Rect(self.x, self.y, 53, 20)
