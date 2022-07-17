@@ -1,15 +1,15 @@
-from grpc import local_channel_credentials
 import pygame
 import sys
 import random
 from marlene import Marlene
 from scaffold import Platform
 import coordchoices
-import startscreen, endscreen
+import startscreen, endscreen, winscreen
 
 RESOLUTION = WIDTH, HEIGHT = 600, 500
 SCREEN = pygame.display.set_mode(RESOLUTION)
 pygame.display.set_caption("FORG")
+pygame.display.set_icon(pygame.image.load('assets/trophy.ico'))
 CLOCK = pygame.time.Clock()
 pygame.font.init()
 
@@ -60,8 +60,6 @@ def genmap():
 #        legy += 25
 
 genmap()
-
-level = 1
 
 ANIMATIONFRAMEDURATION = 3
 global animationframeposition
@@ -147,16 +145,73 @@ gravelcount2 = 200
 playerplat = None
 numtoremove = 15
 
+level = 1
 lastlevel = 0
-lastlastlevel = 0
 dobreak = False
 runendscreen = False
+runwinscreen = False
 
 startscreen.run(SCREEN, WIDTH, HEIGHT, CLOCK)
 
 while True:
 
     SCREEN.fill('#ffffff')
+
+    if runendscreen:
+        endscreen.run(SCREEN, WIDTH, HEIGHT, CLOCK)
+        startscreen.run(SCREEN, WIDTH, HEIGHT, CLOCK)
+        a = False
+        d = False
+        jump = False
+        jumpable = False
+
+        gravity = 0.05
+        yvelocity = 0
+        godown = False
+        xvelocity = 0
+        xvcap = 5
+
+        gravel = False
+        ungravel = False
+        nofloor = False
+        gravelcount = random.randint(300, 500)
+        gravelcount2 = 200
+        playerplat = None
+        numtoremove = 15
+
+        level = 1
+        lastlevel = 0
+        dobreak = False
+        runendscreen = False
+        runwinscreen = False
+    
+    if runwinscreen:
+        winscreen.run(SCREEN, WIDTH, HEIGHT, CLOCK)
+        startscreen.run(SCREEN, WIDTH, HEIGHT, CLOCK)
+        a = False
+        d = False
+        jump = False
+        jumpable = False
+
+        gravity = 0.05
+        yvelocity = 0
+        godown = False
+        xvelocity = 0
+        xvcap = 5
+
+        gravel = False
+        ungravel = False
+        nofloor = False
+        gravelcount = random.randint(300, 500)
+        gravelcount2 = 200
+        playerplat = None
+        numtoremove = 15
+
+        level = 1
+        lastlevel = 0
+        dobreak = False
+        runendscreen = False
+        runwinscreen = False
 
     gravelcount -= 1
     if ungravel:
@@ -239,8 +294,8 @@ while True:
         level += 1
         if level % 3 == 0:
             numtoremove += 1
-        if level == 16:
-            break
+        if level == 10:
+            runwinscreen = True
         
     if godown == True:
         yvelocity += gravity
@@ -265,9 +320,8 @@ while True:
         level -= 1
         if level > lastlevel:
             lastlevel = level - 1
-            lastlastlevel = level - 2
-        if level == 0 or lastlastlevel == level:
-            doendscreen = True
+        if level == 0 or lastlevel == level:
+            runendscreen = True
 
     if a and abs(xvelocity) < xvcap:
         xvelocity -= 0.2

@@ -10,6 +10,8 @@ def run(SCREEN, WIDTH, HEIGHT, CLOCK):
     font1 = pygame.font.Font('assets/didot.ttc', 75)
     font2 = pygame.font.Font('assets/notosans.ttf', 35)
     font3 = pygame.font.Font('assets/notosans.ttf', 20)
+    white = pygame.image.load('assets/white.png')
+    white.set_alpha(25)
     while startxv == 0:
         startxv = random.randint(-5, 5)
     while startyv == 0:
@@ -31,6 +33,7 @@ def run(SCREEN, WIDTH, HEIGHT, CLOCK):
     buttongroup.add(info)
     buttongroup.update()
 
+    gamejamlogo = pygame.transform.scale(pygame.image.load('assets/jam2022.png'), (200, 110))
     
 
     bcount = 10
@@ -39,7 +42,7 @@ def run(SCREEN, WIDTH, HEIGHT, CLOCK):
     doinfo = False
 
     while True:
-        SCREEN.fill('#ffffff')
+        SCREEN.blit(white, (0, 0, white.get_width(), white.get_height()))
 
         if pressed:
             bcount -= 1
@@ -88,7 +91,7 @@ def run(SCREEN, WIDTH, HEIGHT, CLOCK):
                 pogam2 = font2.render("sphericalcylinder and flerbyGerby37", True, '#000000')
                 aart = font1.render("Art Assets:", True, '#000000')
                 aart2 = font2.render("flerbyGerby37", True, '#000000')
-                esc = font2.render("ESC to go back to menu", True, '#000000')
+                esc = font2.render("ESC to return to menu", True, '#000000')
 
                 SCREEN.blit(pogam, (0, 0, pogam.get_width(), pogam.get_height()))
                 SCREEN.blit(pogam2, (0, 100, pogam2.get_width(), pogam2.get_height()))
@@ -121,12 +124,13 @@ def run(SCREEN, WIDTH, HEIGHT, CLOCK):
                 lin1 = font3.render("FORG is a game where you, Marlene the ant, have to get a trophy", True, '#000000')
                 lin2 = font3.render("(An amazing game idea, I know)", True, '#000000')
                 lin3 = font3.render("On each level, a timer will count down to \"gravel\", where chosen", True, '#000000')
-                lin4 = font3.render("platforms (and the floor) dissappear.", True, '#000000')
+                lin4 = font3.render("platforms (and the floor) disappear.", True, '#000000')
                 lin5 = font3.render("Each level is procedurally randomly generated, the countdown", True, '#000000')
                 lin6 = font3.render("is random, and the dissappearing platforms are random.", True, '#000000')
                 lin7 = font3.render("If that's not a roll of the dice, I don't know what is!", True, '#000000')
-                lin8 = font3.render("This game was developed for the 2022 GMTK Game Jam", True, '#000000')
-                esc = font2.render("ESC to go back to menu", True, '#000000')
+                lin8 = font3.render("Controls are A, D, and SPACE", True, '#000000')
+                lin9 = font3.render("This game was developed for the 2022 GMTK Game Jam", True, '#000000')
+                esc = font2.render("ESC to return to menu", True, '#000000')
 
                 SCREEN.blit(lin1, (0, 0, lin1.get_width(), lin1.get_height()))
                 SCREEN.blit(lin2, (0, 25, lin2.get_width(), lin2.get_height()))
@@ -135,7 +139,10 @@ def run(SCREEN, WIDTH, HEIGHT, CLOCK):
                 SCREEN.blit(lin5, (0, 100, lin5.get_width(), lin5.get_height()))
                 SCREEN.blit(lin6, (0, 125, lin6.get_width(), lin6.get_height()))
                 SCREEN.blit(lin7, (0, 150, lin7.get_width(), lin7.get_height()))
-                SCREEN.blit(lin8, (0, 300, lin8.get_width(), lin8.get_height()))
+                SCREEN.blit(lin8, (0, 200, lin7.get_width(), lin8.get_height()))
+                SCREEN.blit(lin9, (0, 300, lin8.get_width(), lin8.get_height()))
+                pygame.draw.rect(SCREEN, '#000000', (0, 350, 200, 110))
+                SCREEN.blit(gamejamlogo, (0, 350, gamejamlogo.get_width(), gamejamlogo.get_height()))
                 SCREEN.blit(esc, (0, 450, esc.get_width(), esc.get_height()))
 
                 pygame.display.update()

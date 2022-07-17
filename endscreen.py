@@ -20,7 +20,7 @@ def run(SCREEN, WIDTH, HEIGHT, CLOCK):
         if dobreak:
             break
 
-        congra = font1.render("Congradulations!", True, '#000000')
+        congra = font1.render("Congratulations!", True, '#000000')
         die = font1.render("You Died!", True, '#000000')
         lin1 = font2.render("We are pleased to inform you", True, '#000000')
         lin2 = font2.render("that you no longer exist!", True, '#000000')
@@ -33,3 +33,4 @@ def run(SCREEN, WIDTH, HEIGHT, CLOCK):
         SCREEN.blit(lin3, ((WIDTH/2)-(lin3.get_width()/2), 450, lin3.get_width(), lin3.get_height()))
 
         pygame.display.update()
+        CLOCK.tick(30)
