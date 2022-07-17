@@ -1,9 +1,11 @@
+from grpc import local_channel_credentials
 import pygame
 import sys
 import random
 from marlene import Marlene
 from scaffold import Platform
 import coordchoices
+import startscreen, endscreen
 
 RESOLUTION = WIDTH, HEIGHT = 600, 500
 SCREEN = pygame.display.set_mode(RESOLUTION)
@@ -12,7 +14,7 @@ CLOCK = pygame.time.Clock()
 pygame.font.init()
 
 pygame.event.set_allowed(
-    (pygame.KEYDOWN, pygame.KEYUP))
+    (pygame.MOUSEBUTTONDOWN))
 
 font1 = pygame.font.SysFont('timesnewroman', 22)
 
@@ -58,32 +60,6 @@ def genmap():
 #        legy += 25
 
 genmap()
-
-grass = pygame.image.load('assets/grass.png')
-button = pygame.image.load('assets/button-1.png')
-exclaim = pygame.image.load('assets/exclamatorypunctuation.png')
-trophy = pygame.image.load('assets/trophy.png')
-trophyrect = pygame.Rect((WIDTH/2)-(trophy.get_width()/2), 0, trophy.get_width(), trophy.get_height())
-
-
-global a
-global d
-a = False
-d = False
-jump = False
-jumpable = False
-
-gravity = 0.05
-yvelocity = 0
-godown = False
-xvelocity = 0
-xvcap = 5
-
-gravel = False
-ungravel = False
-nofloor = False
-gravelcount = random.randint(300, 500)
-gravelcount2 = 200
 
 level = 1
 
@@ -140,9 +116,43 @@ def advanceAnimation():
             player.image = player.forwards
         animationframeposition = 0
         animationcurrentframe = 0
-    
 
 
+pygame.event.set_allowed(
+    (pygame.KEYDOWN, pygame.KEYUP))
+
+grass = pygame.image.load('assets/grass2.png')
+exclaim = pygame.image.load('assets/exclamatorypunctuation.png')
+trophy = pygame.image.load('assets/trophy.png')
+trophyrect = pygame.Rect((WIDTH/2)-(trophy.get_width()/2), 0, trophy.get_width(), trophy.get_height())
+
+global a
+global d
+a = False
+d = False
+jump = False
+jumpable = False
+
+gravity = 0.05
+yvelocity = 0
+godown = False
+xvelocity = 0
+xvcap = 5
+
+gravel = False
+ungravel = False
+nofloor = False
+gravelcount = random.randint(300, 500)
+gravelcount2 = 200
+playerplat = None
+numtoremove = 15
+
+lastlevel = 0
+lastlastlevel = 0
+dobreak = False
+runendscreen = False
+
+startscreen.run(SCREEN, WIDTH, HEIGHT, CLOCK)
 
 while True:
 
@@ -167,7 +177,7 @@ while True:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            sys.exit()
+            dobreak = True
         if event.type == pygame.KEYDOWN:
             match event.key:
                 case pygame.K_a:
@@ -176,6 +186,8 @@ while True:
                     d = True
                 case pygame.K_SPACE:
                     jump = True
+                case pygame.K_ESCAPE:
+                    startscreen.run(SCREEN, WIDTH, HEIGHT, CLOCK)
         if event.type == pygame.KEYUP:
             match event.key:
                 case pygame.K_a:
@@ -183,12 +195,15 @@ while True:
                 case pygame.K_d:
                     d = False
 
+    if dobreak:
+        break
+
     advanceAnimation()
 
     godown = True
 
     for platform in platformgroup:
-
+    
         if player.rect.bottom > platform.rect.top and \
                 player.rect.right > platform.rect.left and \
                 player.rect.left < platform.rect.right and \
@@ -196,8 +211,13 @@ while True:
             godown = False
             yvelocity = 0
             jumpable = True
+            playerplat = platform
             if player.rect.bottom < platform.rect.bottom:
                 player.y = platform.rect.top - player.image.get_height() + 1
+            if gravel:
+                platform.remove(platformgroup)
+                godown = True
+                jumpable = False
 
     if player.y >= 449 - player.image.get_height() and not nofloor:
         yvelocity = 0
@@ -217,9 +237,11 @@ while True:
         ungravel = False
         toremove = None
         level += 1
+        if level % 3 == 0:
+            numtoremove += 1
         if level == 16:
             break
-
+        
     if godown == True:
         yvelocity += gravity
         yvelocity = round(yvelocity, 2)
@@ -241,6 +263,11 @@ while True:
         ungravel = False
         toremove = None
         level -= 1
+        if level > lastlevel:
+            lastlevel = level - 1
+            lastlastlevel = level - 2
+        if level == 0 or lastlastlevel == level:
+            doendscreen = True
 
     if a and abs(xvelocity) < xvcap:
         xvelocity -= 0.2
@@ -271,7 +298,8 @@ while True:
 
     if gravel and not nofloor:
         sprites = platformgroup.sprites()
-        toremove = random.choices(sprites, k=15)
+        toremove = random.choices(sprites, k=numtoremove)
+        toremove.append(playerplat)
         platformgroup.remove(toremove)
         nofloor = True
         gravel = False
